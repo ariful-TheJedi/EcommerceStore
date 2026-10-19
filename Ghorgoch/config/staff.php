@@ -5,6 +5,7 @@ return [
         'api/products', 'api/products/*', 'api/categories', 'api/categories/*',
         'api/inventory', 'api/inventory/*', 'api/customers', 'api/customers/*',
         'api/orders', 'api/orders/*', 'api/payments', 'api/payments/*',
+        'api/tags', 'api/tags/*',
     ],
     'public_routes' => [
         'POST api/customers/register',

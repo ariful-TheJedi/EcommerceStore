@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable(['parent_id', 'name', 'slug', 'description', 'image_path', 'is_active', 'sort_order'])]
@@ -21,6 +22,7 @@ class Category extends Model
     {
         return [
             'is_active' => 'boolean',
+            'parent_id' => 'integer',
             'sort_order' => 'integer',
         ];
     }
@@ -35,8 +37,8 @@ class Category extends Model
         return $this->hasMany(self::class, 'parent_id');
     }
 
-    public function products(): HasMany
+    public function products(): BelongsToMany
     {
-        return $this->hasMany(Product::class);
+        return $this->belongsToMany(Product::class, 'product_categories');
     }
 }

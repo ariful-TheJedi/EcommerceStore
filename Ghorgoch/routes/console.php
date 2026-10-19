@@ -1,9 +1,14 @@
 <?php
 
 use App\Auth\Domain\Services\BootstrapAdmin;
+use App\Catalog\Domain\Services\MediaService;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Validation\ValidationException;
+
+Artisan::command('catalog:cleanup-media', function (MediaService $media): void {
+    $this->info('Removed '.$media->cleanup().' unreferenced catalog files.');
+})->purpose('Remove managed catalog files older than the grace period that have no database references');
 
 Artisan::command('auth:bootstrap-admin', function (BootstrapAdmin $bootstrap): int {
     try {

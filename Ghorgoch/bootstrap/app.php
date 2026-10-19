@@ -58,7 +58,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 403 => 'This operation is forbidden.',
                 404 => 'Route not found.',
                 405 => 'This HTTP method is not allowed.',
-                409 => 'The last active administrator must remain active.',
+                409 => $request->is('api/users/*') ? 'The last active administrator must remain active.' : 'The operation conflicts with the current state.',
                 419 => 'CSRF token mismatch. Fetch a new CSRF token.',
                 422 => 'The given data was invalid.',
                 429 => 'Too many attempts. Please try again later.',

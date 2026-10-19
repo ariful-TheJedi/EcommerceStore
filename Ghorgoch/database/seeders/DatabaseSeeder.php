@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Catalog\Models\ProductVariant;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -160,11 +161,16 @@ class DatabaseSeeder extends Seeder
                 'category_id' => $categoryIds[$productIndex % count($categoryIds)],
                 'name' => $group['name'],
                 'description' => 'Sample catalog item using the supplied '.count($group['images']).' local product image(s).',
-                'status' => 'active',
+                'status' => 'published',
                 'created_at' => $now,
                 'updated_at' => $now,
             ]);
             $variants = [];
+
+            DB::table('product_categories')->insertOrIgnore([
+                'product_id' => $productId,
+                'category_id' => $categoryIds[$productIndex % count($categoryIds)],
+            ]);
 
             foreach ($group['images'] as $imageIndex => $image) {
                 $sku = sprintf('DEMO-P%02d-V%02d', $productIndex + 1, $imageIndex + 1);
@@ -173,8 +179,10 @@ class DatabaseSeeder extends Seeder
                 $variantId = $this->upsertId('product_variants', ['sku' => $sku], [
                     'product_id' => $productId,
                     'attributes' => json_encode($attributes, JSON_THROW_ON_ERROR),
-                    'price' => $price,
-                    'compare_at_price' => $price * 1.15,
+                    'option_signature' => hash('sha256', json_encode((object) ProductVariant::normalizeOptions($attributes), JSON_THROW_ON_ERROR)),
+                    'price' => $price * 1.15,
+                    'sale_price' => $price,
+                    'compare_at_price' => null,
                     'stock_quantity' => 30,
                     'is_active' => true,
                     'created_at' => $now,
