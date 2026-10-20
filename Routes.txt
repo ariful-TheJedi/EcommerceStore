@@ -1,0 +1,402 @@
+AUTH ROUTES
+Base: /api/auth
+JSON requests/responses | Cookie session authentication
+
+Module ownership
+- Auth: login/logout, sessions, password recovery, and email verification/tokens.
+- Users owns staff profiles, roles, permissions, account status, and staff activity history.
+- POST /api/auth/admin/users is a compatibility endpoint; staff creation delegates to Users safeguards.
+
+Route tree
+/api/auth
+|-- GET /health                       Check module status
+|-- GET /csrf-token                   Get CSRF token + session cookie
+|-- POST /admin/users                  Admin creates an account (staff session required)
+'-- /customer OR /staff                Same routes below for each account type
+    |-- POST /login                    Sign in
+    |-- POST /forgot-password          Request reset email
+    |-- POST /reset-password           Reset password with emailed token
+    |-- GET  /me                       Read own account *
+    |-- POST /logout                   Sign out this device *
+    |-- POST /logout-all               Sign out all devices *
+    |-- POST /password                 Change own password *
+    |-- POST /email                    Change own email *
+    |-- POST /email/verify             Verify own email *
+    '-- POST /email/resend             Resend verification email *
+
+* Requires login through the matching customer/staff flow.
+Example: /customer/login means /api/auth/customer/login.
+
+Current feature switches
+- AUTH_CUSTOMER_ENABLED=true: customer authentication enabled.
+- AUTH_EMAIL_ENABLED=false: email-dependent features paused until mail is configured.
+  Forgot/reset password, email changes, verification, and resend return 403 while paused.
+  Login and password changes remain available.
+
+Accepted inputs and rejection rules
+| Route | Accept (JSON fields) | Reject / behavior |
+|-------|----------------------|-------------------|
+| /health | None needed | Wrong HTTP method |
+| /csrf-token | None | Unexpected fields |
+| /admin/users | name, email, password, password_confirmation, role (admin/staff/customer); optional phone | Requires an admin using the staff session; invalid/duplicate fields rejected; creates an account without sending email |
+| /login | email, password | Unknown account, wrong password, disabled account, wrong account type |
+| /forgot-password | email | Invalid email; unknown/disabled/unverified/wrong-type accounts get the same success response but no email |
+| /reset-password | email, token, password, password_confirmation | Invalid/expired/used token, wrong account/type, disabled/unverified account, weak/mismatched password |
+| /me | None | Missing/expired/revoked/wrong-type session |
+| /logout | None | Invalid session; ends current session |
+| /logout-all | None | Invalid session; ends all own sessions |
+| /password | current_password, password, password_confirmation | Wrong current password, unchanged/weak/mismatched new password; success ends all own sessions |
+| /email | email, current_password | Wrong password, invalid/duplicate email; success ends all own sessions and requires new email verification |
+| /email/verify | token | Invalid/expired/used token or token for another account/email |
+| /email/resend | None | Invalid session, rate limit, mail unavailable; replaces previous token |
+
+Common Auth rules
+- Reject unexpected fields (422). Account IDs, permissions, and is_active cannot be supplied.
+  The admin account-creation endpoint accepts role explicitly.
+- Customer routes accept customers only; staff routes accept staff/admin only.
+- Email: required for login, valid, max 255 characters; account creation/change email must be unique.
+- Emails are trimmed and lowercased; account creation/change email uniqueness is case-insensitive.
+- Admin account creation: name required, max 150 characters; optional unique phone, e.g. +8801712345678.
+- New password: 12+ characters, uppercase + lowercase + number + symbol, max 72 bytes.
+  password_confirmation must match. Existing login/current passwords only need to be nonempty, max 72 bytes.
+- Reset/verification tokens: 64 characters, expire after 60 minutes, single use.
+- Sessions: 120-minute idle timeout; 12-hour absolute limit. Disabled accounts lose access.
+- Active unverified accounts can log in; email verification is currently paused.
+- Email delivery needs AUTH_MAILER=smtp and working MAIL_* settings.
+  When email features are enabled, email changes can succeed with verification_sent=false;
+  resend later once delivery is available. Email features are currently paused as described above.
+
+How to call
+1. GET /api/auth/csrf-token; keep the cookie and data.csrf_token.
+2. Send that cookie + X-CSRF-TOKEN header with every POST.
+3. Login returns a NEW data.csrf_token; use it for subsequent POSTs.
+4. After logout/password/email change, fetch a fresh CSRF token before logging in again.
+Test credentials: users.txt.
+
+Module testing
+- Auth route tests: Ghorgoch/tests/Feature/Auth/ (current module under review).
+
+Status codes
+200 success | 201 account created | 401 invalid login/session | 403 forbidden/feature paused | 404 route absent
+419 invalid CSRF | 422 invalid input | 429 rate limited | 503 verification mail unavailable
+
+
+
+USERS MODULE
+============
+Base: /api/users
+Staff cookie session required on every Users route.
+Customer accounts are excluded from this module. Email is the unique staff login identifier.
+
+Route tree
+/api/users
+|-- GET   /                       List staff [staff.view]
+|-- POST  /                       Create staff [staff.manage]
+|-- GET   /me                     Read own staff profile [staff login]
+|-- PATCH /me                     Update own permitted profile fields [staff login]
+|-- GET   /capabilities           List supported roles and permissions [roles.assign]
+'-- /{staff}                      Numeric staff/admin account ID; customers return 404
+    |-- GET   /                   Read staff profile [staff.view]
+    |-- PATCH /                   Update profile, role, or permissions [staff.manage + assignment rules]
+    |-- POST  /disable            Deactivate account and revoke sessions [staff.manage]
+    |-- POST  /reactivate         Reactivate account [staff.manage]
+    '-- GET   /activity           Paginated audit history [staff.view]
+
+The slash shown beneath /{staff} denotes /api/users/{staff}; it is not an extra URI segment.
+GET routes also support HEAD.
+There is no DELETE endpoint. Deactivate accounts to preserve historical references.
+
+Inputs
+- GET /api/users:
+  page (integer >= 1), per_page (1..100, default 20), search (max 150 characters),
+  role (admin|staff), status (active|disabled).
+  Search matches name, email, or phone. Results are ordered by ID.
+- POST /api/users:
+  Required: name, email, password, password_confirmation, role (admin|staff).
+  Optional: phone, avatar_path, permissions (array of distinct supported permission names).
+  Name max 150 characters; email max 255, normalized to lowercase and checked case-insensitively.
+  Phone is nullable, unique, and uses the Bangladesh format, e.g. +8801712345678.
+  Password follows Auth's password rules and is hashed through Auth provisioning.
+  New staff accounts start active. No customer profile is created.
+- PATCH /api/users/me:
+  Optional: name, phone, avatar_path.
+  Email and password changes use the existing Auth endpoints and require the current password.
+  Role, permissions, account status, IDs, password fields, and verification fields are rejected.
+- PATCH /api/users/{staff}:
+  Optional: name, email, phone, avatar_path, role, permissions.
+  Password changes/reset behavior remains owned by Auth.
+  Status changes use the dedicated disable/reactivate routes.
+- POST /disable and POST /reactivate: no body fields.
+- GET /activity: page and per_page (1..100, default 20).
+- Other Users read routes: no input fields.
+- Unexpected inputs are rejected with 422; permission names are validated against the supported list.
+
+Response shape
+- Single account: data.user.
+- List: data.staff and data.pagination (current_page, per_page, total, last_page).
+- History: data.activity and data.pagination.
+- Capabilities: data.roles and data.permissions.
+- Profiles include name, email, phone, avatar_path, role, is_active, effective permissions, and timestamps.
+- Password hashes, reset tokens, authentication fingerprints, and access versions are never returned.
+- Responses use Cache-Control: no-store, private.
+
+Role and assignment rules
+- Fixed roles: admin and staff. Custom role creation is outside the requested simple role system.
+- Active admins receive all explicitly defined permissions.
+- Staff receive only their explicitly assigned permissions; no permissions are granted by default.
+- Disabled accounts and customer accounts have no staff permissions.
+- staff.manage permits account management but does not permit role/permission assignment.
+- Role assignment requires an admin with roles.assign.
+- Permission assignment requires an admin with permissions.assign.
+- Self role/permission changes additionally require staff.assign_self.
+- A non-admin cannot modify or deactivate an admin.
+- Managers cannot modify or reactivate staff whose assigned permissions exceed their own authority,
+  including currently disabled staff; this prevents login-email takeover and reactivation escalation.
+- A caller cannot grant permissions outside their own effective permission set.
+- The final active admin cannot be deactivated or demoted (409).
+  Checks run inside transactions with a shared database lock to serialize concurrent staff changes.
+
+Permission catalog
+- catalog.view       Read catalog.
+- catalog.manage     Manage catalog.
+- inventory.adjust   Adjust inventory.
+- customers.view     Read customer administration data.
+- customers.manage   Manage customer administration data.
+- orders.view        Read order administration data.
+- orders.process     Process orders.
+- payments.record    Record payments.
+- payments.reconcile Reconcile existing payments.
+- staff.view         Read staff profiles and their audit history.
+- staff.manage       Create/update/deactivate/reactivate staff accounts.
+- roles.assign       Assign supported staff roles.
+- permissions.assign Assign supported action permissions.
+- staff.assign_self  Explicit authorization for self role/permission changes.
+
+Access revocation and audit
+- Deactivation revokes stored sessions and makes protected API requests fail.
+- Role/permission, email, password, and status changes advance the account access version.
+  Reactivation or restoring old permissions cannot revive a previous session.
+- Permissions are read from current account data without a permission cache.
+- Staff creation, profile/status changes, and role/permission changes are recorded in staff_activity.
+- Staff Auth password changes/resets, email changes, and email verification are also recorded.
+  Credential changes and their database audit entries are committed together.
+- Audit records contain actor_id, staff_id, action, safe before/after values, and created_at.
+  Password-reset recovery has actor_id=null because it is not an authenticated staff action.
+- Historical order/payment relationships remain readable for deactivated staff.
+- Order saves by authorized authenticated staff set processed_by on creation/status changes.
+- Payment creation sets recorded_by from the authenticated staff member.
+- Payment reconciliation preserves recorded_by and sets reconciled_by.
+  Request-supplied actor IDs cannot replace these authenticated identities.
+
+How to call
+1. GET /api/auth/csrf-token and retain its session cookie.
+2. POST /api/auth/staff/login with the cookie and X-CSRF-TOKEN.
+3. Use the NEW CSRF token returned by login for all POST/PATCH requests.
+4. Send the staff session cookie on every Users request.
+5. Sign in again after a role/permission, password/email change, or reactivation.
+
+Additional status code
+409 conflict: the operation would remove the final active administrator.
+
+
+REGISTERED MODULE ROUTES AND PERMISSION INTEGRATION
+==================================================
+Current application API route tree (Auth and Users are expanded above)
+/api
+|-- GET /                          API welcome response
+|-- /auth                          Authentication routes above
+|-- /users                         Staff management routes above
+|-- /products
+|   '-- GET /health                Public module status
+|-- /categories
+|   '-- GET /health                Public module status
+|-- /inventory
+|   '-- GET /health                Public module status
+|-- /customers
+|   |-- GET  /health               Public status; customer feature switch applies
+|   '-- POST /register             Public customer registration; CSRF, feature switches, rate limit apply
+|-- /orders
+|   '-- GET /health                Public module status
+|-- /cart
+|   '-- GET /health                Public module status
+'-- /payments
+    '-- GET /health                Public module status
+
+GET / serves the welcome webpage. Framework GET /up provides application health.
+The tree above shows the original module entry points. The complete Catalog routes are expanded below.
+Test-only integration endpoints are not application routes.
+
+Central staff permission enforcement
+- The API middleware automatically protects non-public routes under products, categories,
+  inventory, customers, orders, and payments.
+- Only the exact public health methods/paths and POST /api/customers/register are exempt.
+  Customer registration keeps its own validation, CSRF, feature switches, and throttling.
+- Protected endpoints must declare a trusted route default, for example:
+    Route::get('/orders', ...)->defaults('staff_permission', 'orders.view');
+    Route::post('/orders/{order}/process', ...)->defaults('staff_permission', 'orders.process');
+    Route::post('/payments', ...)->defaults('staff_permission', 'payments.record');
+    Route::post('/payments/{payment}/reconcile', ...)->defaults('staff_permission', 'payments.reconcile');
+  These examples explain the integration contract; they are not additional registered routes.
+- A missing or unknown declaration denies access even to admins.
+  A request payload or query parameter cannot supply or override this permission.
+- The middleware starts the Auth session, enforces CSRF for writes, refreshes the staff account,
+  validates session expiry/revocation, and checks the declared permission before the handler.
+- Laravel gates also expose every supported permission for service-level authorization.
+- Order/payment Eloquent saves enforce the processing/recording/reconciliation permission
+  and attach the authenticated staff reference. System/background writes without a user retain
+  explicitly supplied attribution; missing historical actor identities are not invented.
+
+Module tests
+- Ghorgoch/tests/Feature/Users/StaffManagementTest.php
+- Ghorgoch/tests/Feature/Users/StaffIntegrationTest.php
+- Ghorgoch/tests/Feature/Users/ModelRelationshipsTest.php
+
+
+CATALOG MODULE
+==============
+Currency: BDT. All purchasable items are product_variants.
+Simple products have one variant with attributes={}; configurable products have one variant per option combination.
+Products store no price or stock. SKU is global and normalized to uppercase by the API.
+Variant option names/values are trimmed, case-normalized, and sorted for duplicate-combination detection.
+States: draft, published, archived. Existing active products were migrated to published.
+
+Public route tree (no login required)
+/api/catalog
+'-- /products
+    |-- GET /                         Published products; active variants only
+    '-- GET /{slug}                   Published product details; unknown/unpublished slug returns 404
+
+Staff product route tree (staff cookie session; CSRF on writes)
+/api/products
+|-- GET   /                          List products including unpublished [catalog.view]
+|-- POST  /                          Create product [catalog.manage]
+|-- GET   /health                    Public module health
+'-- /{product}                       Numeric product ID
+    |-- GET   /                      Product details [catalog.view]
+    |-- PATCH /                      Update product [catalog.manage]
+    |-- POST  /archive               Archive without deleting history [catalog.manage]
+    |-- /variants
+    |   |-- POST /                   Create purchasable variant [catalog.manage]
+    |   '-- /{variant}
+    |       |-- PATCH /              Update options, pricing, active status [catalog.manage]
+    |       '-- POST /disable        Disable without deleting history [catalog.manage]
+    '-- /images
+        |-- POST /                   Upload image using multipart/form-data [catalog.manage]
+        '-- /{image}
+            |-- PATCH /              Change variant association, alt text, order, primary flag [catalog.manage]
+            '-- DELETE /             Remove association; safely remove file after commit if unreferenced [catalog.manage]
+
+GET routes also support HEAD. Slashes beneath parameters represent the parameter URL itself.
+Product and variant DELETE endpoints intentionally do not exist; archive/disable preserves order references.
+Variant/image IDs must belong to their parent product.
+
+Taxonomy route tree
+/api/categories AND /api/tags
+|-- GET   /                          Paginated list [catalog.view]
+|-- POST  /                          Create [catalog.manage]
+'-- /{item}
+    |-- GET    /                     Read [catalog.view]
+    |-- PATCH  /                     Update [catalog.manage]
+    '-- DELETE /                     Remove taxonomy association only [catalog.manage]
+
+Categories additionally retain GET /api/categories/health as a public status endpoint.
+Category slugs are unique within categories; tag slugs are unique within tags.
+Category self-parenting and ancestor/descendant cycles are rejected.
+Deleting a category with children returns 409: reparent/delete its children first.
+Deleting a leaf category detaches memberships and clears legacy products.category_id references.
+Deleting categories or tags never deletes products.
+
+Inventory route tree
+/api/inventory
+|-- GET /                            Paginated variant stock [catalog.view]
+|-- GET /health                      Public module health
+'-- /{variant}
+    |-- GET  /history                Paginated inventory ledger [catalog.view]
+    |-- POST /adjust                 Manual delta with reason and operation key [inventory.adjust]
+    |-- POST /reserve                Reserve for an order [orders.process]
+    |-- POST /release                Release an order reservation [orders.process]
+    '-- POST /deduct                 Deduct a reserved quantity from on-hand stock [orders.process]
+
+Catalog inputs
+- Product create: name, slug required; optional description, status, category_id, category_ids[], tag_ids[].
+  Update accepts the same fields, each optional.
+  category_ids controls many-category membership; category_id is retained as a legacy primary category.
+  Clearing category_ids also clears the primary category unless category_id is explicitly supplied.
+- Variant create: sku and price required; optional attributes object, sale_price, sale_starts_at,
+  sale_ends_at, cost_price, barcode, weight_grams, is_active, allow_backorders, low_stock_threshold.
+  Update accepts the same optional fields. Stock/reservation quantities cannot be supplied here.
+  Sale price is >=0 and strictly below price; dates are normalized to UTC and end must follow start.
+  Date/price checks include existing values during partial updates.
+- Product lists: page >=1, per_page 1..100 (default 20), search (name/description),
+  category (slug), tag (slug), min_price, max_price, availability (in_stock|out_of_stock|low_stock),
+  sort (id|-id|name|-name|price|-price|created_at|-created_at).
+  Staff lists also accept status (draft|published|archived); public lists reject status.
+  Price filtering/sorting uses effective price with sale dates enforced.
+  Combined price and in-stock/low-stock filters must match the same variant.
+  Out-of-stock products have no active variant available to purchase.
+- Category: name and slug required on create; optional parent_id, description, is_active, sort_order.
+- Tag: name and slug required on create.
+- Images: upload image required on create; optional variant_id, alt_text, is_primary, sort_order.
+  Metadata updates accept those optional fields except image.
+  Formats: JPEG, PNG, WebP; maximum 5 MB and 20 million pixels by default.
+  MIME/content and extension are checked; bytes must decode as an image and are re-encoded as PNG.
+  Primary selection is exclusive per product. A variant without its own images falls back to product images.
+- Inventory list: page, per_page, availability.
+- Ledger history: page, per_page.
+- Manual adjust: quantity_change (signed nonzero integer), reason, operation_key required;
+  optional order_id associates a correction/return with an order.
+  Reusing an operation key with different variant/quantity/reason/order returns 409.
+- Reserve: order_id, quantity (positive integer).
+- Release/deduct: order_id.
+- Unexpected inputs are rejected. Publication/stock state is checked inside locked transactions.
+
+Stock rules and Orders integration
+- stock_quantity is on-hand; reserved_quantity is reserved.
+- available_stock = stock_quantity - reserved_quantity.
+- Backorders are disabled by default and must be explicitly enabled on a variant.
+- Reservations lock the product, variant, and order rows and create one order+variant reservation.
+- Repeating the same reservation does not reserve twice. Different quantities/closed reservations conflict.
+- Deduction subtracts on-hand and reserved quantities once; release subtracts reserved quantity once.
+- Deduct/release replay is safe; trying to switch a completed transition returns 409.
+- Archived products and inactive variants cannot be newly reserved or deducted.
+  Release remains available after archive/disable.
+- Backorders may have negative available stock; physical on-hand stays nonnegative.
+  Backordered reservations cannot be deducted until stock arrives.
+- Inventory ledger: variant, order where applicable, actor, type, on-hand delta, reserved delta,
+  reason/note, operation key, timestamp.
+- Orders can call App\Catalog\Domain\Services\InventoryService::reserve(), finish(), and adjust().
+  These methods check the supplied staff actor's current permissions.
+
+Responses and cache behavior
+- Product creation/variant creation/image upload/taxonomy creation: 201.
+- Reads/updates/archive/disable/removal/stock transitions: 200.
+- Product response: data.product. Product list: data.products + data.pagination.
+- Variant writes return the complete refreshed product, including its variants.
+- Taxonomy writes/reads: data.item. Taxonomy list: data.items + data.pagination.
+- Media writes: data.image. Stock list: data.variants + data.pagination.
+- Reserve/release/deduct: data.reservation. Adjustment: data.variant.
+- Ledger: data.transactions + data.pagination.
+- Public responses expose effective_price, regular/sale price, BDT currency, options, images,
+  and availability; cost_price, internal stock metadata, and inactive variants are excluded.
+- Sale boundaries are start-inclusive and end-exclusive.
+- Responses use no-store headers and fresh database reads, so stock/price/publication changes do not
+  leave stale catalog cache entries. Related data is eager-loaded with bounded pagination.
+
+Media maintenance
+- Files are stored under catalog/ on the configured media disk (public by default).
+- Legacy seeded productimage/ URLs continue to reference their existing public assets.
+- Upload failures remove newly written files.
+- Image removal deletes the managed file after transaction commit only when no product image,
+  category image, or staff avatar still references it.
+- php artisan catalog:cleanup-media removes unreferenced managed files older than 24 hours.
+  Recently uploaded files, shared references, and unmanaged legacy assets are preserved.
+
+Schema and verification
+- Catalog expansion: 2026_10_20_001645_complete_catalog_schema.php.
+- Lookup indexes: 2026_10_20_003113_add_catalog_lookup_indexes.php.
+- Rollback of the expansion refuses to discard inventory reservation history; use a forward migration.
+- Tests: Ghorgoch/tests/Feature/Catalog/.
+- PostgreSQL concurrency check uses an isolated temporary schema and two independent PHP workers.
+  PowerShell: $env:CATALOG_PG_DATABASE='ghorgoch'
+              php artisan test --compact tests/Feature/Catalog/InventoryConcurrencyTest.php
+  The database name must identify your local test-enabled PostgreSQL database.

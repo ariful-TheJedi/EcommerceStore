@@ -1,0 +1,12 @@
+Local development credentials — database: ghorgoch
+
+| Email | Password | Role | Status |
+|---|---|---|---|
+| auth.admin@example.test | DevTest@12345 | Admin | Active, verified |
+| auth.staff@example.test | DevTest@12345 | Staff | Active, verified |
+| auth.customer@example.test | DevTest@12345 | Customer | Active, verified |
+| auth.unverified@example.test | DevTest@12345 | Customer | Active, unverified |
+| auth.disabled@example.test | DevTest@12345 | Customer | Disabled, verified |
+| auth.disabled.staff@example.test | DevTest@12345 | Staff | Disabled, verified |
+
+Customer accounts have linked customer profiles. Staff and admin accounts do not.
