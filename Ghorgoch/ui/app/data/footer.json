@@ -1,0 +1,36 @@
+{
+  "followGhorgoch": "ঘরগোছের সঙ্গে থাকুন",
+  "footerNavigation": "Footer navigation",
+  "pText": "© ",
+  "pText2": "ঘরগোছ. All rights reserved.",
+  "links": [
+    {
+      "label": "About",
+      "href": "/about"
+    },
+    {
+      "label": "Blog",
+      "href": "/blog"
+    },
+    {
+      "label": "Tracking",
+      "href": "/tracking"
+    }
+  ],
+  "contactEmail": "arifulthejedi@gmail.com",
+  "contactPhone": "+8801782368302",
+  "socialLinks": [
+    {
+      "label": "Facebook",
+      "href": ""
+    },
+    {
+      "label": "Instagram",
+      "href": ""
+    },
+    {
+      "label": "WhatsApp",
+      "href": ""
+    }
+  ]
+}

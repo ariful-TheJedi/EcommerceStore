@@ -1,0 +1,26 @@
+{
+  "routes": {
+    "dashboard": "/admin",
+    "login": "/admin/login"
+  },
+  "brand": {
+    "name": "ঘরগোছ",
+    "subtitle": "Administration",
+    "label": "Ghorgoch admin dashboard"
+  },
+  "labels": {
+    "navigation": "Admin navigation",
+    "openMenu": "Open admin menu",
+    "closeMenu": "Close admin menu",
+    "skipToContent": "Skip to content",
+    "defaultTitle": "Administration",
+    "welcome": "Welcome,",
+    "checkingSession": "Checking session…",
+    "openingLogin": "Opening sign in…",
+    "signingOut": "Signing out…",
+    "signOutError": "Unable to sign out. Please try again."
+  },
+  "metadata": {
+    "administrationGhorgoch": "Administration | Ghorgoch"
+  }
+}

@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('users')->name('users.')->middleware(['auth-session', AuthenticateAccount::class.':staff'])->group(function (): void {
     Route::get('/me', [StaffController::class, 'me'])->name('me');
     Route::patch('/me', [StaffController::class, 'updateMe'])->middleware('throttle:auth-sensitive')->name('me.update');
+    Route::patch('/me/settings', [StaffController::class, 'settings'])->middleware('throttle:auth-sensitive')->name('me.settings');
+    Route::post('/me/avatar', [StaffController::class, 'avatar'])->middleware('throttle:auth-sensitive')->name('me.avatar.store');
+    Route::delete('/me/avatar', [StaffController::class, 'avatar'])->middleware('throttle:auth-sensitive')->name('me.avatar.destroy');
     Route::get('/capabilities', [StaffController::class, 'capabilities'])->name('capabilities');
     Route::get('/', [StaffController::class, 'index'])->name('index');
     Route::post('/', [StaffController::class, 'store'])->middleware('throttle:auth-sensitive')->name('store');

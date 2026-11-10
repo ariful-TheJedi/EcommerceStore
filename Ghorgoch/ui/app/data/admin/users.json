@@ -1,0 +1,21 @@
+{
+  "title": "User Management", "description": "Manage staff accounts and access.",
+  "add": "Add user", "edit": "Edit", "editTitle": "Edit user",
+  "save": "Save user", "saving": "Saving…", "cancel": "Cancel",
+  "remove": "Disable", "restore": "Reactivate",
+  "confirmRemove": "Disable this staff account? They will no longer be able to sign in.",
+  "confirm": "Confirm disable", "loading": "Loading users…", "empty": "No users found.",
+  "search": "Search users", "searchAction": "Search", "retry": "Retry",
+  "previous": "Previous", "next": "Next", "page": "Page", "actions": "Actions",
+  "active": "Active", "disabled": "Disabled",
+  "saved": "User saved.", "removed": "User disabled.", "restored": "User reactivated.",
+  "failed": "Unable to complete the request. Please try again.",
+  "columns": [{"key":"name","label":"Name"},{"key":"email","label":"Email"},{"key":"role","label":"Role"},{"key":"is_active","label":"Status"}],
+  "fields": [
+    {"key":"name","label":"Name","type":"text","required":true,"maxLength":150},
+    {"key":"email","label":"Email","type":"email","required":true,"maxLength":255},
+    {"key":"role","label":"Role","type":"select","defaultValue":"staff","options":[{"value":"staff","label":"Staff"},{"value":"admin","label":"Admin"}]},
+    {"key":"password","label":"Password","type":"password","required":true,"createOnly":true,"minLength":12,"maxLength":72,"hint":"At least 12 characters, including uppercase, lowercase, numbers, and symbols."},
+    {"key":"password_confirmation","label":"Confirm password","type":"password","required":true,"createOnly":true,"minLength":12,"maxLength":72}
+  ]
+}

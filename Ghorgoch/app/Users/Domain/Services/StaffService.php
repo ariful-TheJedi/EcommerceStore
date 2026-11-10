@@ -5,8 +5,12 @@ namespace App\Users\Domain\Services;
 use App\Auth\Domain\Services\UserProvisioning;
 use App\Users\Models\User;
 use Illuminate\Database\UniqueConstraintViolationException;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
+use Throwable;
 
 class StaffService
 {
@@ -58,6 +62,62 @@ class StaffService
 
             return $user;
         });
+    }
+
+    /** @param array<string, mixed> $data */
+    public function settings(User $principal, array $data): User
+    {
+        return $this->transaction(function () use ($principal, $data): User {
+            $actor = $this->actor($principal, false);
+            abort_if(array_key_exists('role', $data) && $actor->role !== 'admin', 403);
+            $sensitive = isset($data['password']) || (isset($data['email']) && $data['email'] !== $actor->email)
+                || (isset($data['role']) && $data['role'] !== $actor->role);
+            if ($sensitive && ! Hash::check($data['current_password'] ?? '', $actor->password)) {
+                throw ValidationException::withMessages(['current_password' => 'The current password is incorrect.']);
+            }
+            $changes = array_intersect_key($data, array_flip(['name', 'email', 'password', 'role']));
+            $before = $this->snapshot($actor);
+            $user = $this->update($actor, $actor->id, $changes, true);
+            if (isset($changes['password'])) {
+                $this->audit($actor, $user, 'password_changed', $before);
+            }
+
+            return $user;
+        });
+    }
+
+    public function avatar(User $principal, ?UploadedFile $file): User
+    {
+        $path = null;
+        $previous = null;
+        try {
+            $user = $this->transaction(function () use ($principal, $file, &$path, &$previous): User {
+                $user = $this->actor($principal, false);
+                $previous = $user->avatar_path;
+                $before = $this->snapshot($user);
+                if ($file !== null) {
+                    $path = $file->storePublicly('avatars/'.$user->id, 'public');
+                    if (! is_string($path)) {
+                        throw new \RuntimeException('Profile photo storage failed.');
+                    }
+                }
+                $user->avatar_path = $path;
+                $user->save();
+                $this->audit($user, $user, 'avatar_updated', $before);
+
+                return $user;
+            });
+        } catch (Throwable $exception) {
+            if (is_string($path)) {
+                Storage::disk('public')->delete($path);
+            }
+            throw $exception;
+        }
+        if (is_string($previous) && dirname($previous) === 'avatars/'.$user->id) {
+            Storage::disk('public')->delete($previous);
+        }
+
+        return $user;
     }
 
     private function actor(User $principal, bool $manage = true): User

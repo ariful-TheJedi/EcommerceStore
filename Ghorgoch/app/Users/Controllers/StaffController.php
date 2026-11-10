@@ -2,13 +2,16 @@
 
 namespace App\Users\Controllers;
 
+use App\Auth\Domain\Services\AuthService;
 use App\Http\Controllers\Controller;
 use App\Users\Domain\Services\StaffService;
 use App\Users\Models\User;
 use App\Users\Requests\StaffRequest;
+use App\Users\Requests\StaffSettingsRequest;
 use App\Users\Resources\StaffResource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class StaffController extends Controller
@@ -60,6 +63,23 @@ class StaffController extends Controller
     public function updateMe(StaffRequest $request): JsonResponse
     {
         return $this->account($request, $this->service->update($request->user(), $request->user()->id, $request->validated(), true));
+    }
+
+    public function settings(StaffSettingsRequest $request, AuthService $auth): JsonResponse
+    {
+        $user = $this->service->settings($request->user(), $request->validated());
+        Auth::guard('staff')->setUser($user);
+        $request->session()->regenerate(true);
+        $request->session()->put('auth_fingerprint', $auth->fingerprint($user));
+
+        return $this->respond(['user' => (new StaffResource($user))->resolve($request)]);
+    }
+
+    public function avatar(StaffSettingsRequest $request): JsonResponse
+    {
+        $user = $this->service->avatar($request->user(), $request->isMethod('DELETE') ? null : $request->file('avatar'));
+
+        return $this->respond(['user' => (new StaffResource($user))->resolve($request)]);
     }
 
     public function disable(StaffRequest $request, int $staff): JsonResponse

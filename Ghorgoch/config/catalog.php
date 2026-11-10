@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'inventory_enabled' => env('INVENTORY_ENABLED', false),
     'currency' => 'BDT',
     'media_disk' => 'public',
     'upload_max_kb' => 5120,

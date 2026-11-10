@@ -28,9 +28,9 @@ class ProductController extends Controller
         return $this->account($request, $product);
     }
 
-    public function publicShow(CatalogRequest $request, string $slug): JsonResponse
+    public function publicShow(CatalogRequest $request, int $product): JsonResponse
     {
-        $product = $this->query->products([], true)->where('slug', $slug)->firstOrFail();
+        $product = $this->query->products([], true)->findOrFail($product);
 
         return $this->respond(['product' => (new ProductResource($product))->resolve($request)]);
     }
@@ -79,7 +79,10 @@ class ProductController extends Controller
 
     private function listing(CatalogRequest $request, bool $public): JsonResponse
     {
-        $page = $this->query->products($request->validated(), $public)->paginate($request->integer('per_page', 20));
+        $perPage = $public
+            ? $request->integer('limit', $request->integer('per_page', 15))
+            : $request->integer('per_page', 20);
+        $page = $this->query->products($request->validated(), $public)->paginate($perPage);
 
         return $this->respond([
             'products' => ProductResource::collection($page->getCollection())->resolve($request),

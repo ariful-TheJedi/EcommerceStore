@@ -1,0 +1,26 @@
+{
+  "workspace": {
+    "thisWorkspaceIsReadyForTheNext": "This workspace is ready for the next step."
+  },
+  "request": {
+    "theEmailOrPasswordIsIncorrect": "The email or password is incorrect.",
+    "youDoNotHavePermissionToPerform": "You do not have permission to perform this action.",
+    "theRequestedResourceWasNotFound": "The requested resource was not found.",
+    "pleaseCheckTheInformationYouEntered": "Please check the information you entered.",
+    "serviceTemporarilyUnavailablePleaseTryAgain": "Service temporarily unavailable. Please try again later.",
+    "yourSessionHasExpiredPleaseSign": "Your session has expired. Please sign in again.",
+    "theRequestTimedOutPleaseTry": "The request timed out. Please try again.",
+    "thisInformationHasChangedRefreshAnd": "This information has changed. Refresh and try again.",
+    "yourSessionHasExpiredPleaseRefresh": "Your session has expired. Please refresh and try again.",
+    "tooManyRequestsPleaseWaitA": "Too many requests. Please wait a moment and try again.",
+    "theRequestCouldNotBeCompleted": "The request could not be completed. Please try again.",
+    "useARelativeAPIPathBeginning": "Use a relative API path beginning with /.",
+    "timeoutError": "TimeoutError",
+    "abortError": "AbortError",
+    "theRequestTimedOutOrWas": "The request timed out or was cancelled. Please try again.",
+    "unableToConnectPleaseCheckYour": "Unable to connect. Please check your connection and try again."
+  },
+  "auth": {
+    "theRequestCouldNotBeCompleted": "The request could not be completed. Please try again."
+  }
+}

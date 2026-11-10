@@ -42,6 +42,12 @@ class InventoryService
     {
         Gate::forUser($actor)->authorize('orders.process');
 
+        return $this->reserveForOrder($actor, $variantId, $orderId, $quantity);
+    }
+
+    public function reserveForOrder(?User $actor, int $variantId, int $orderId, int $quantity): object
+    {
+
         return $this->locked($variantId, function (ProductVariant $variant) use ($actor, $orderId, $quantity): object {
             $existing = DB::table('stock_reservations')->where('variant_id', $variant->id)->where('order_id', $orderId)->lockForUpdate()->first();
             if ($existing) {
@@ -68,6 +74,12 @@ class InventoryService
     public function finish(User $actor, int $variantId, int $orderId, string $action): object
     {
         Gate::forUser($actor)->authorize('orders.process');
+
+        return $this->finishForOrder($actor, $variantId, $orderId, $action);
+    }
+
+    public function finishForOrder(?User $actor, int $variantId, int $orderId, string $action): object
+    {
         abort_unless(in_array($action, ['release', 'deduct'], true), 422);
 
         return $this->locked($variantId, function (ProductVariant $variant) use ($actor, $orderId, $action): object {
@@ -93,6 +105,55 @@ class InventoryService
             $this->ledger($actor, $variant, $action, $change, -$reservation->quantity, 'Order stock '.$action, $action.'-'.$reservation->id, $orderId);
 
             return DB::table('stock_reservations')->find($reservation->id);
+        });
+    }
+
+    public function dispatchForOrder(User $actor, int $variantId, int $orderId, int $quantity): object
+    {
+        Gate::forUser($actor)->authorize('orders.process');
+
+        return $this->locked($variantId, function (ProductVariant $variant) use ($actor, $orderId, $quantity): object {
+            $reservation = DB::table('stock_reservations')->where('variant_id', $variant->id)->where('order_id', $orderId)->lockForUpdate()->first();
+            if (! $reservation) {
+                $order = DB::table('orders')->where('id', $orderId)->lockForUpdate()->first();
+                abort_unless($order, 404);
+                if ($order->checkout_key !== null) {
+                    throw ValidationException::withMessages(['inventory' => 'The stock reservation for this order is missing. Reconcile its inventory before dispatch.']);
+                }
+                $history = DB::table('inventory_transactions')->where('order_id', $orderId)->where('variant_id', $variant->id)->get();
+                $deducted = -(int) $history->whereIn('transaction_type', ['deduct', 'stock_out'])->sum('quantity_change');
+                if ($history->isNotEmpty() && ($deducted !== $quantity || $history->contains(fn (\stdClass $entry): bool => $entry->quantity_change > 0 || $entry->reserved_change !== 0))) {
+                    throw ValidationException::withMessages(['inventory' => 'This older order has inconsistent stock history. Reconcile its inventory before dispatch.']);
+                }
+                if ($deducted === $quantity) {
+                    DB::table('stock_reservations')->insert([
+                        'variant_id' => $variant->id, 'order_id' => $orderId, 'quantity' => $quantity,
+                        'status' => 'deducted', 'created_at' => now(), 'updated_at' => now(),
+                    ]);
+                } else {
+                    $this->reserveForOrder($actor, $variant->id, $orderId, $quantity);
+                }
+            } elseif ($reservation->quantity !== $quantity) {
+                throw ValidationException::withMessages(['inventory' => 'The reserved quantity does not match the ordered quantity.']);
+            }
+
+            return $this->finishForOrder($actor, $variant->id, $orderId, 'deduct');
+        });
+    }
+
+    public function returnForOrder(User $actor, int $variantId, int $orderId): void
+    {
+        Gate::forUser($actor)->authorize('orders.process');
+        $this->locked($variantId, function (ProductVariant $variant) use ($actor, $orderId): void {
+            $reservation = DB::table('stock_reservations')->where('variant_id', $variant->id)->where('order_id', $orderId)->lockForUpdate()->first();
+            abort_unless($reservation && $reservation->status === 'deducted', 409, 'Only dispatched stock can be returned.');
+            $key = 'return-'.$reservation->id;
+            if (DB::table('inventory_transactions')->where('operation_key', $key)->exists()) {
+                return;
+            }
+            $variant->stock_quantity += $reservation->quantity;
+            $variant->save();
+            $this->ledger($actor, $variant, 'return', $reservation->quantity, 0, 'Order returned to stock', $key, $orderId);
         });
     }
 
@@ -122,10 +183,10 @@ class InventoryService
         }
     }
 
-    private function ledger(User $actor, ProductVariant $variant, string $type, int $change, int $reserved, string $reason, string $key, ?int $orderId = null): void
+    private function ledger(?User $actor, ProductVariant $variant, string $type, int $change, int $reserved, string $reason, string $key, ?int $orderId = null): void
     {
         DB::table('inventory_transactions')->insert([
-            'variant_id' => $variant->id, 'order_id' => $orderId, 'actor_id' => $actor->id,
+            'variant_id' => $variant->id, 'order_id' => $orderId, 'actor_id' => $actor?->id,
             'transaction_type' => $type, 'quantity_change' => $change, 'reserved_change' => $reserved,
             'note' => $reason, 'operation_key' => $key, 'created_at' => now(),
         ]);

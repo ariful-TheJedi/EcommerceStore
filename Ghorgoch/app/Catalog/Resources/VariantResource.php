@@ -23,7 +23,8 @@ class VariantResource extends JsonResource
             'sale_starts_at' => $this->sale_starts_at, 'sale_ends_at' => $this->sale_ends_at,
             'barcode' => $this->barcode, 'weight_grams' => $this->weight_grams, 'is_active' => $this->is_active,
             'available_stock' => $this->resource->availableStock(),
-            'available' => $product->status === 'published' && $this->is_active && ($this->allow_backorders || $this->resource->availableStock() > 0),
+            'inventory_enabled' => (bool) config('catalog.inventory_enabled'),
+            'available' => $product->status === 'published' && $this->is_active && (! config('catalog.inventory_enabled') || $this->allow_backorders || $this->resource->availableStock() > 0),
             'images' => ImageResource::collection($images->values())->resolve($request),
             ...(! $public ? [
                 'stock_quantity' => $this->stock_quantity, 'reserved_quantity' => $this->reserved_quantity,

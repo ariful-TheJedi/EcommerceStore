@@ -1,0 +1,19 @@
+{
+  "title": "Products", "description": "Add, edit, and remove products from one place.",
+  "add": "Add product", "edit": "Edit", "editTitle": "Edit product",
+  "save": "Save product", "saving": "Saving…", "cancel": "Cancel",
+  "remove": "Delete", "restore": "Restore as draft",
+  "confirmRemove": "Remove this product from the storefront? It will be archived to preserve order history.",
+  "confirm": "Confirm delete", "loading": "Loading products…", "empty": "No products found.",
+  "search": "Search products", "searchAction": "Search", "retry": "Retry",
+  "previous": "Previous", "next": "Next", "page": "Page", "actions": "Actions",
+  "saved": "Product saved.", "removed": "Product archived.", "restored": "Product restored as a draft.",
+  "failed": "Unable to complete the request. Please try again.",
+  "columns": [{"key":"name","label":"Name"},{"key":"slug","label":"Slug"},{"key":"status","label":"Status"}],
+  "fields": [
+    {"key":"name","label":"Product name","type":"text","required":true,"maxLength":200},
+    {"key":"slug","label":"Slug","type":"text","required":true,"maxLength":220,"pattern":"[a-z0-9]+(?:-[a-z0-9]+)*","hint":"Use lowercase letters, numbers, and hyphens."},
+    {"key":"description","label":"Description","type":"textarea","maxLength":100000},
+    {"key":"status","label":"Status","type":"select","defaultValue":"draft","options":[{"value":"draft","label":"Draft"},{"value":"published","label":"Published"},{"value":"archived","label":"Archived"}]}
+  ]
+}

@@ -47,6 +47,8 @@ class AppServiceProvider extends ServiceProvider
             });
         }
         RateLimiter::for('customer-registration', fn (Request $request): Limit => Limit::perMinute(5)->by($request->ip()));
+        RateLimiter::for('checkout', fn (Request $request): Limit => Limit::perMinute(30)->by($request->session()->getId()));
+        RateLimiter::for('guest-orders', fn (Request $request): Limit => Limit::perMinute(30)->by($request->ip()));
         RateLimiter::for('auth-resend', fn (Request $request): Limit => Limit::perMinute(1)->by((string) ($request->user()?->id ?? $request->ip())));
         RateLimiter::for('auth-sensitive', fn (Request $request): Limit => Limit::perMinute(10)->by((string) ($request->user()?->id ?? $request->ip())));
 

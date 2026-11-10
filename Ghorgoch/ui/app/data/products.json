@@ -1,0 +1,190 @@
+{
+  "catalog": {
+    "label": "পছন্দের পণ্যগুলো",
+    "pText": "আপনার প্রতিদিনের জন্য",
+    "LinkText": "সব পণ্য দেখুন →",
+    "labelText": "সাজান ",
+    "optionText": "নতুন পণ্য",
+    "optionText2": "দাম: কম থেকে বেশি",
+    "optionText3": "দাম: বেশি থেকে কম",
+    "optionText4": "নাম অনুযায়ী",
+    "labelText2": "পণ্য খুঁজুন",
+    "placeholder": "নাম লিখে খুঁজুন",
+    "arialabel": "পণ্যের বিভাগ",
+    "buttonText": "সব পণ্য",
+    "buttonText2": "আবার চেষ্টা করুন",
+    "pText2": "পণ্য লোড হচ্ছে…",
+    "pText3": "এখন কোনো পণ্য পাওয়া যায়নি। অন্য বিভাগ বা নাম দিয়ে খুঁজুন।",
+    "pText4": "টি পণ্য",
+    "arialabel2": "পণ্যের পৃষ্ঠা",
+    "buttonText3": "আগের পৃষ্ঠা",
+    "spanText": "/ ",
+    "buttonText4": "পরের পৃষ্ঠা",
+    "LinkText2": "এই বিভাগের সব পণ্য দেখুন ↗"
+  },
+  "card": {
+    "savingsPill": "{percent}% ছাড়",
+    "spanText": "ছবি আসছে",
+    "spanText2": "new",
+    "spanText3": "−",
+    "spanText4": "%",
+    "label": "মূল্য শীঘ্রই",
+    "spanText5": "আগের দাম ",
+    "ButtonText": "ব্যাগে যোগ করুন",
+    "ButtonText2": "এখনই কিনুন",
+    "label2": "{value1} ব্যাগে যোগ করা হয়েছে"
+  },
+  "information": {
+    "label": "Product details",
+    "description": "Description",
+    "additional": "Additional Information",
+    "yes": "হ্যাঁ",
+    "no": "না",
+    "productCode": "Product ID",
+    "sku": "SKU",
+    "categories": "Categories",
+    "noDescription": "এই পণ্যের বিস্তারিত বিবরণ এখনো যোগ করা হয়নি।"
+  },
+  "details": {
+    "arialabel": "পৃষ্ঠার অবস্থান",
+    "spanText": "·",
+    "h2Text": "একই ক্যাটাগরির আরও পণ্য",
+    "LinkText": "সব পণ্য দেখুন →"
+  },
+  "gallery": {
+    "arialabel": "পণ্যের ছবিগুলো",
+    "alt": ""
+  },
+  "purchase": {
+    "pText": "পণ্য কোড: ",
+    "spanText": "·",
+    "label": "অর্ডার করা যাবে",
+    "label2": "এই ধরনটি এখন স্টকে নেই",
+    "ButtonText": "এখনই কিনুন",
+    "label3": "ব্যাগে যোগ করা হয়েছে",
+    "label4": "ব্যাগে যোগ করুন",
+    "pText2": "ডেলিভারি চার্জ ২০০ টাকা",
+    "label5": "ব্যাগে যোগ করা হয়েছে।",
+    "label6": "স্টকে আছে · {value1}টি"
+  },
+  "preview": {
+    "productPreview": {
+      "breadcrumbs": [
+        "প্রথম পাতা",
+        "জুতা",
+        "দৈনন্দিন স্নিকার"
+      ],
+      "categorySlug": "shoes",
+      "name": "দৈনন্দিন ব্যবহারের আরামদায়ক স্নিকার",
+      "currency": "BDT",
+      "images": [
+        {
+          "src": "/images/product-shoe-profile.jpg",
+          "alt": "স্নিকারের পাশের দৃশ্য"
+        },
+        {
+          "src": "/images/product-shoe-side.jpg",
+          "alt": "স্নিকারের সামনের দৃশ্য"
+        },
+        {
+          "src": "/images/product-shoe-top.jpg",
+          "alt": "স্নিকারের ওপরের দৃশ্য"
+        }
+      ],
+      "attributeLabels": {
+        "color": "রং",
+        "material": "উপাদান"
+      },
+      "variants": [
+        {
+          "id": 1,
+          "sku": "SNEAKER-WHITE-MESH",
+          "attributes": {
+            "color": "সাদা",
+            "material": "মেশ"
+          },
+          "effective_price": 2490,
+          "available": true,
+          "is_active": true,
+          "available_stock": 12
+        },
+        {
+          "id": 2,
+          "sku": "SNEAKER-GREY-MESH",
+          "attributes": {
+            "color": "ধূসর",
+            "material": "মেশ"
+          },
+          "effective_price": 2590,
+          "available": true,
+          "is_active": true,
+          "available_stock": 8
+        },
+        {
+          "id": 3,
+          "sku": "SNEAKER-WHITE-KNIT",
+          "attributes": {
+            "color": "সাদা",
+            "material": "নিট"
+          },
+          "effective_price": 2790,
+          "available": false,
+          "is_active": true,
+          "available_stock": 0
+        }
+      ]
+    },
+    "relatedProductPreviews": [
+      {
+        "id": "demo-walking-shoe",
+        "slug": "lightweight-walking-shoe",
+        "categorySlug": "shoes",
+        "name": "হালকা আরামদায়ক ওয়াকিং শু",
+        "image": "/images/product-shoe-profile.jpg",
+        "price": 2290
+      },
+      {
+        "id": "demo-casual-sneaker",
+        "slug": "classic-casual-sneaker",
+        "categorySlug": "shoes",
+        "name": "ক্ল্যাসিক ক্যাজুয়াল স্নিকার",
+        "image": "/images/product-shoe-side.jpg",
+        "price": 2690
+      },
+      {
+        "id": "demo-mesh-sneaker",
+        "slug": "breathable-mesh-sneaker",
+        "categorySlug": "shoes",
+        "name": "বাতাস চলাচলযোগ্য মেশ স্নিকার",
+        "image": "/images/product-shoe-top.jpg",
+        "price": 2390
+      },
+      {
+        "id": "demo-knit-shoe",
+        "slug": "soft-knit-shoe",
+        "categorySlug": "shoes",
+        "name": "নরম নিটের দৈনন্দিন জুতা",
+        "image": "/images/product-shoe-profile.jpg",
+        "price": 2890
+      }
+    ]
+  },
+  "search": {
+    "title": "পছন্দের কিছু খুঁজে নিন",
+    "eyebrow": "আপনার খোঁজ, আপনার পছন্দ",
+    "description": "আপনার পছন্দের পণ্যটি খুঁজে নিন।",
+    "home": "প্রথম পাতা",
+    "page": "অনুসন্ধান",
+    "results": "অনুসন্ধানের ফলাফল",
+    "all": "সব পণ্য",
+    "clear": "মুছে ফেলুন",
+    "reset": "সব ফিল্টার সরান",
+    "empty": "কোনো পণ্য পাওয়া যায়নি",
+    "emptyHint": "অন্য কোনো নাম দিয়ে খুঁজুন অথবা বিভাগের ফিল্টার সরিয়ে আবার চেষ্টা করুন।",
+    "hint": "পণ্যের নাম লিখুন — ফলাফল নিজে থেকেই আপডেট হবে।",
+    "matching": "আপনি খুঁজছেন",
+    "browse": "আপনার জন্য সব পণ্য",
+    "popular": "জনপ্রিয় অনুসন্ধান",
+    "submit": "পণ্য খুঁজুন"
+  }
+}

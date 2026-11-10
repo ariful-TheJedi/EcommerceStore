@@ -22,6 +22,8 @@ class Customer extends Model
     {
         return [
             'date_of_birth' => 'date',
+            'blocked_at' => 'datetime',
+            'closed_at' => 'datetime',
         ];
     }
 

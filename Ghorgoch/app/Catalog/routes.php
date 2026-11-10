@@ -1,5 +1,6 @@
 <?php
 
+use App\Catalog\Controllers\FrontPageController;
 use App\Catalog\Controllers\InventoryController;
 use App\Catalog\Controllers\MediaController;
 use App\Catalog\Controllers\ProductController;
@@ -11,9 +12,16 @@ foreach (['products', 'categories', 'inventory'] as $module) {
 }
 
 Route::prefix('catalog')->name('catalog.public.')->group(function (): void {
+    Route::get('/front-page', [FrontPageController::class, 'publicShow'])->name('front-page');
+    Route::get('/categories', [TaxonomyController::class, 'publicIndex'])->name('categories.index');
+    Route::get('/categories/{slug}', [TaxonomyController::class, 'publicShow'])->name('categories.show');
     Route::get('/products', [ProductController::class, 'publicIndex'])->name('products.index');
-    Route::get('/products/{slug}', [ProductController::class, 'publicShow'])->name('products.show');
+    Route::get('/products/{product}', [ProductController::class, 'publicShow'])->whereNumber('product')->name('products.show');
 });
+
+Route::get('/front-page', [FrontPageController::class, 'show'])->defaults('staff_permission', 'catalog.view')->name('front-page.show');
+Route::patch('/front-page', [FrontPageController::class, 'update'])->defaults('staff_permission', 'catalog.manage')->name('front-page.update');
+Route::post('/front-page/images', [FrontPageController::class, 'upload'])->defaults('staff_permission', 'catalog.manage')->name('front-page.images');
 
 Route::prefix('products')->name('catalog.products.')->group(function (): void {
     Route::get('/', [ProductController::class, 'index'])->defaults('staff_permission', 'catalog.view')->name('index');
@@ -28,6 +36,9 @@ Route::prefix('products')->name('catalog.products.')->group(function (): void {
     Route::patch('/{product}/images/{image}', [MediaController::class, 'updateImage'])->whereNumber(['product', 'image'])->defaults('staff_permission', 'catalog.manage')->name('images.update');
     Route::delete('/{product}/images/{image}', [MediaController::class, 'destroy'])->whereNumber(['product', 'image'])->defaults('staff_permission', 'catalog.manage')->name('images.destroy');
 });
+
+Route::post('/categories/{item}/image', [TaxonomyController::class, 'uploadCategoryImage'])->whereNumber('item')->defaults('catalog_kind', 'category')->defaults('staff_permission', 'catalog.manage')->name('catalog.categories.image');
+Route::delete('/categories/{item}/image', [TaxonomyController::class, 'removeCategoryImage'])->whereNumber('item')->defaults('catalog_kind', 'category')->defaults('staff_permission', 'catalog.manage')->name('catalog.categories.image.destroy');
 
 foreach (['categories' => 'category', 'tags' => 'tag'] as $prefix => $kind) {
     Route::prefix($prefix)->name('catalog.'.$prefix.'.')->group(function () use ($kind): void {

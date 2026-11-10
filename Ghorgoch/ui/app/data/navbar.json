@@ -1,0 +1,35 @@
+{
+  "skipToContent": "Skip to content",
+  "ghorgochHome": "Ghorgoch home",
+  "mainNavigation": "Main navigation",
+  "closeProductSearch": "Close product search",
+  "searchProducts": "Search products",
+  "openNavigation": "Open navigation",
+  "search": "/search",
+  "quickSearch": "Quick search",
+  "pText": "আপনি কী খুঁজছেন?",
+  "eSCToClose": "ESC to close",
+  "placeholder": "পণ্য, বিভাগ বা ব্র্যান্ড খুঁজুন",
+  "clear": "Clear",
+  "submitSearch": "Submit search",
+  "popularSearches": "Popular searches",
+  "popular": "Popular:",
+  "label": "ব্যাকপ্যাক",
+  "label2": "ঘর সাজানো",
+  "label3": "হেডফোন",
+  "closeNavigation": "Close navigation",
+  "mobileNavigation": "Mobile navigation",
+  "shoppingBag": "Shopping bag (",
+  "LinkText": ")",
+  "accessibleLabel1": "Shopping bag, {value1} items",
+  "links": [
+    {
+      "label": "Catalog",
+      "href": "/products"
+    },
+    {
+      "label": "Categories",
+      "href": "/categories"
+    }
+  ]
+}

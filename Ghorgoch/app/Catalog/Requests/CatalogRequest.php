@@ -27,6 +27,10 @@ class CatalogRequest extends FormRequest
         $creating = in_array($action, ['store', 'storeVariant', 'upload'], true);
         $page = ['page' => ['sometimes', 'integer', 'min:1'], 'per_page' => ['sometimes', 'integer', 'min:1', 'max:100']];
         if (in_array($action, ['index', 'publicIndex'], true)) {
+            if ($action === 'publicIndex') {
+                $page['limit'] = ['sometimes', 'integer', 'min:1', 'max:100'];
+            }
+
             return $page + ($kind === 'product' ? [
                 'search' => ['sometimes', 'string', 'max:150'],
                 'category' => ['sometimes', 'string', 'max:180'],
@@ -74,6 +78,9 @@ class CatalogRequest extends FormRequest
                 'low_stock_threshold' => ['sometimes', 'integer', 'min:0', 'max:100000000'],
             ];
         }
+        if ($action === 'uploadCategoryImage') {
+            return ['image' => ['required', 'file', 'image:allow_svg', 'mimes:svg,png,jpg,jpeg', 'extensions:svg,png,jpg,jpeg', 'max:2048']];
+        }
         if (in_array($action, ['upload', 'updateImage'], true)) {
             return [
                 ...($action === 'upload' ? ['image' => ['required', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'extensions:jpg,jpeg,png,webp', 'max:'.config('catalog.upload_max_kb')]] : []),
@@ -90,7 +97,22 @@ class CatalogRequest extends FormRequest
                     'name' => [$required, 'string', 'max:200'],
                     'slug' => [$required, 'string', 'max:220', 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/'],
                     'description' => ['sometimes', 'nullable', 'string', 'max:100000'],
+                    'specifications' => ['sometimes', 'nullable', 'array', 'max:100', function (string $attribute, mixed $value, \Closure $fail): void {
+                        if (! is_array($value)) {
+                            return;
+                        }
+                        if ($value !== [] && array_is_list($value)) {
+                            $fail('Specifications must contain named properties.');
+
+                            return;
+                        }
+                        $encoded = json_encode($value, 0, 16);
+                        if ($encoded === false || strlen($encoded) > 65535) {
+                            $fail('Specifications must be at most 64 KB and no more than 16 levels deep.');
+                        }
+                    }],
                     'status' => ['sometimes', Rule::in(['draft', 'published', 'archived'])],
+                    'is_new' => ['sometimes', 'boolean'],
                     'category_id' => ['sometimes', 'nullable', 'integer', 'exists:categories,id'],
                     'category_ids' => ['sometimes', 'array', 'max:100'],
                     'category_ids.*' => ['integer', 'distinct', 'exists:categories,id'],
@@ -103,6 +125,7 @@ class CatalogRequest extends FormRequest
                 'name' => [$required, 'string', 'max:'.($kind === 'category' ? 150 : 100)],
                 'slug' => [$required, 'string', 'max:'.($kind === 'category' ? 180 : 120), 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/'],
                 ...($kind === 'category' ? [
+                    'is_taxonomy' => ['sometimes', 'boolean'],
                     'parent_id' => ['sometimes', 'nullable', 'integer', 'exists:categories,id'],
                     'description' => ['sometimes', 'nullable', 'string', 'max:100000'],
                     'is_active' => ['sometimes', 'boolean'],

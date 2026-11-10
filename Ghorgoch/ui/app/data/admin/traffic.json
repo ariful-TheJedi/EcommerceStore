@@ -1,0 +1,22 @@
+{
+  "title": "Traffic Monitoring",
+  "description": "Understand how visitors find and explore your store.",
+  "status": "Tracking not connected",
+  "notice": "Traffic collection has not been configured. Metrics will appear here once an analytics source is connected.",
+  "unavailable": "Unavailable until tracking is connected",
+  "metrics": [
+    { "label": "Visitors", "description": "Unique visitors to your store", "icon": "Users" },
+    { "label": "Page views", "description": "Total storefront pages viewed", "icon": "Eye" },
+    { "label": "Sessions", "description": "Visits to your store", "icon": "MousePointer2" },
+    { "label": "Active visitors", "description": "Visitors in the last 5 minutes", "icon": "Activity" }
+  ],
+  "trend": "Traffic overview",
+  "trendDescription": "Visitor and page-view trends over time.",
+  "emptyTitle": "No traffic data available yet",
+  "emptyDescription": "Connect traffic tracking to start measuring visits. Historical traffic is not available before collection begins.",
+  "reports": [
+    { "title": "Top pages", "description": "Discover which storefront pages receive the most views.", "columns": ["Page", "Views"], "empty": "Popular pages will appear after visits are recorded." },
+    { "title": "Traffic sources", "description": "See where visitors discover your store.", "columns": ["Source", "Sessions"], "empty": "Referral and direct traffic will appear here." },
+    { "title": "Devices", "description": "Understand how visitors browse your store.", "columns": ["Device", "Visitors"], "empty": "Mobile, desktop, and tablet visits will appear here." }
+  ]
+}

@@ -10,18 +10,27 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage;
 
-#[Fillable(['parent_id', 'name', 'slug', 'description', 'image_path', 'is_active', 'sort_order'])]
+#[Fillable(['is_taxonomy', 'parent_id', 'name', 'slug', 'description', 'image_path', 'is_active', 'sort_order'])]
 #[UseFactory(CategoryFactory::class)]
 class Category extends Model
 {
     /** @use HasFactory<CategoryFactory> */
     use HasFactory;
 
+    protected $appends = ['image_url'];
+
+    public function getImageUrlAttribute(): ?string
+    {
+        return $this->image_path ? Storage::disk(config('catalog.media_disk'))->url($this->image_path) : null;
+    }
+
     protected function casts(): array
     {
         return [
             'is_active' => 'boolean',
+            'is_taxonomy' => 'boolean',
             'parent_id' => 'integer',
             'sort_order' => 'integer',
         ];

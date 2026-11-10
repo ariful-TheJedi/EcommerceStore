@@ -1,0 +1,201 @@
+{
+  "page": {
+    "title": "পণ্যের ক্যাটাগরি | ঘরগোছ",
+    "arialabel": "পৃষ্ঠার অবস্থান",
+    "LinkText": "প্রথম পাতা",
+    "spanText": "/",
+    "spanText2": "ক্যাটাগরি",
+    "pText": "আপনার পছন্দের সংগ্রহ",
+    "h1Text": "পণ্যের ক্যাটাগরি",
+    "pText2": "পছন্দের ক্যাটাগরি বেছে নিন। আপনার প্রতিদিনের প্রয়োজন আর পছন্দের পণ্য খুঁজে নিন এক জায়গায়।",
+    "pText3": "ক্যাটাগরি লোড করা যায়নি। একটু পরে আবার চেষ্টা করুন।",
+    "aText": "আবার চেষ্টা করুন",
+    "arialabel2": "পণ্যের ক্যাটাগরিগুলো",
+    "pText4": "নতুন ক্যাটাগরি শীঘ্রই আসছে।"
+  },
+  "card": {
+    "alt": ""
+  },
+  "catalog": {
+    "label": "এই বিভাগটি পাওয়া যায়নি।",
+    "breadcrumb": "Breadcrumb",
+    "LinkText": "প্রথম পাতা",
+    "navText": "/ ",
+    "LinkText2": "বিভাগ",
+    "textText": "/ ",
+    "buttonText": "আবার চেষ্টা করুন",
+    "pText": "বিভাগ লোড হচ্ছে…",
+    "pText2": "আপনার পছন্দের সংগ্রহ",
+    "h1Text": "পণ্যের বিভাগ",
+    "h2Text": "↗",
+    "pText3": "বিভাগ শীঘ্রই আসছে।"
+  },
+  "products": {
+    "arialabel": "পৃষ্ঠার অবস্থান",
+    "LinkText": "প্রথম পাতা",
+    "spanText": "/",
+    "LinkText2": "ক্যাটাগরি",
+    "label": "পাওয়া যায়নি",
+    "h1Text": "ক্যাটাগরিটি পাওয়া যায়নি",
+    "LinkText3": "সব ক্যাটাগরি দেখুন",
+    "pText": "এই ক্যাটাগরিতে নতুন পণ্য শীঘ্রই আসছে।"
+  },
+  "preview": {
+    "categoryPreviews": [
+      {
+        "slug": "shoes",
+        "name": "জুতা",
+        "description": "প্রতিদিনের চলার সঙ্গী। আরাম আর সহজ স্টাইলের পছন্দের জুতা খুঁজে নিন।",
+        "image": "/images/product-shoe-profile.jpg"
+      },
+      {
+        "slug": "everyday",
+        "name": "পোশাক",
+        "description": "প্রতিদিনের আরামে, নিজের মতো করে। পছন্দের পোশাকে সাজুক আপনার দিন।",
+        "image": "/images/sample-hoodie.webp"
+      },
+      {
+        "slug": "accessories",
+        "name": "অনুষঙ্গ",
+        "description": "ছোট্ট অনুষঙ্গে নিজের স্টাইলকে দিন নতুন ছোঁয়া।",
+        "image": "/images/sample-sunglasses.jpg"
+      },
+      {
+        "slug": "jewelry",
+        "name": "গয়না",
+        "description": "সাধারণ দিনেও একটু বিশেষ হয়ে ওঠার পছন্দের গয়না।",
+        "image": "/images/sample-necklace.jpg"
+      },
+      {
+        "slug": "home",
+        "name": "ঘর ও জীবন",
+        "description": "যত্নে সাজানো ঘরের জন্য সুন্দর ও প্রয়োজনীয় সবকিছু।",
+        "image": "/images/sample-faucet.webp"
+      },
+      {
+        "slug": "technology",
+        "name": "গ্যাজেট",
+        "description": "প্রতিদিনের কাজ আরও সহজ করতে বেছে নিন আপনার সঙ্গী।",
+        "image": "/images/sample-watch.jpg"
+      },
+      {
+        "slug": "bags",
+        "name": "ব্যাগ",
+        "description": "প্রয়োজন আর পছন্দ মিলিয়ে আপনার প্রতিদিনের ব্যাগ।",
+        "image": "/images/exp-hero.png"
+      }
+    ],
+    "categoryProductPreviews": [
+      {
+        "id": "demo-walking-shoe",
+        "slug": "lightweight-walking-shoe",
+        "categorySlug": "shoes",
+        "name": "হালকা আরামদায়ক ওয়াকিং শু",
+        "image": "/images/product-shoe-profile.jpg",
+        "price": 2290,
+        "isNew": false
+      },
+      {
+        "id": "demo-casual-sneaker",
+        "slug": "classic-casual-sneaker",
+        "categorySlug": "shoes",
+        "name": "ক্ল্যাসিক ক্যাজুয়াল স্নিকার",
+        "image": "/images/product-shoe-side.jpg",
+        "price": 2690,
+        "isNew": false
+      },
+      {
+        "id": "demo-mesh-sneaker",
+        "slug": "breathable-mesh-sneaker",
+        "categorySlug": "shoes",
+        "name": "বাতাস চলাচলযোগ্য মেশ স্নিকার",
+        "image": "/images/product-shoe-top.jpg",
+        "price": 2390,
+        "isNew": false
+      },
+      {
+        "id": "demo-knit-shoe",
+        "slug": "soft-knit-shoe",
+        "categorySlug": "shoes",
+        "name": "নরম নিটের দৈনন্দিন জুতা",
+        "image": "/images/product-shoe-profile.jpg",
+        "price": 2890,
+        "isNew": false
+      },
+      {
+        "id": "sunglasses",
+        "name": "ক্ল্যাসিক অলিভ সানগ্লাস",
+        "image": "/images/sample-sunglasses.jpg",
+        "price": 650,
+        "originalPrice": 850,
+        "slug": "sunglasses",
+        "categorySlug": "accessories",
+        "isNew": false
+      },
+      {
+        "id": "necklace",
+        "name": "বাটারফ্লাই নেকলেস",
+        "image": "/images/sample-necklace.jpg",
+        "price": 790,
+        "slug": "necklace",
+        "categorySlug": "jewelry",
+        "isNew": false
+      },
+      {
+        "id": "earrings",
+        "name": "ফ্লোরাল স্টেটমেন্ট ইয়াররিং",
+        "image": "/images/sample-earrings.jpg",
+        "price": 550,
+        "originalPrice": 690,
+        "slug": "earrings",
+        "categorySlug": "jewelry",
+        "isNew": false
+      },
+      {
+        "id": "faucet",
+        "name": "ব্রাশড গোল্ড বেসিন ট্যাপ",
+        "image": "/images/sample-faucet.webp",
+        "price": 2490,
+        "slug": "faucet",
+        "categorySlug": "home",
+        "isNew": false
+      },
+      {
+        "id": "watch",
+        "name": "এভরিডে স্মার্ট ওয়াচ",
+        "image": "/images/sample-watch.jpg",
+        "price": 1890,
+        "isNew": true,
+        "slug": "watch",
+        "categorySlug": "technology"
+      },
+      {
+        "id": "pendant",
+        "name": "গোল্ডেন বাটারফ্লাই পেনড্যান্ট",
+        "image": "/images/sample-pendant.jpg",
+        "price": 890,
+        "isNew": true,
+        "slug": "pendant",
+        "categorySlug": "jewelry"
+      },
+      {
+        "id": "speaker",
+        "name": "পোর্টেবল ব্লুটুথ স্পিকার",
+        "image": "/images/sample-speaker.jpg",
+        "price": 1290,
+        "isNew": true,
+        "slug": "speaker",
+        "categorySlug": "technology"
+      },
+      {
+        "id": "hoodie",
+        "name": "কমফোর্ট ফিট হুডি",
+        "image": "/images/sample-hoodie.webp",
+        "price": 1490,
+        "isNew": true,
+        "slug": "hoodie",
+        "categorySlug": "everyday"
+      }
+    ]
+  }
+}

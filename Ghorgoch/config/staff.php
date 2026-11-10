@@ -5,7 +5,7 @@ return [
         'api/products', 'api/products/*', 'api/categories', 'api/categories/*',
         'api/inventory', 'api/inventory/*', 'api/customers', 'api/customers/*',
         'api/orders', 'api/orders/*', 'api/payments', 'api/payments/*',
-        'api/tags', 'api/tags/*',
+        'api/tags', 'api/tags/*', 'api/front-page', 'api/front-page/*',
     ],
     'public_routes' => [
         'POST api/customers/register',
@@ -18,8 +18,8 @@ return [
     ],
     'permissions' => [
         'catalog.view', 'catalog.manage', 'inventory.adjust',
-        'customers.view', 'customers.manage', 'orders.view', 'orders.process',
-        'payments.record', 'payments.reconcile', 'staff.view', 'staff.manage',
+        'customers.view', 'customers.manage', 'customers.notes', 'orders.view', 'orders.process',
+        'payments.view', 'payments.record', 'payments.reconcile', 'staff.view', 'staff.manage',
         'roles.assign', 'permissions.assign', 'staff.assign_self',
     ],
 ];

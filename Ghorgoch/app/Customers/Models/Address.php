@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['label', 'recipient_name', 'phone', 'address_line1', 'address_line2', 'area', 'city', 'district', 'postal_code', 'country_code', 'is_default'])]
+#[Fillable(['label', 'recipient_name', 'phone', 'address_line1', 'address_line2', 'area', 'city', 'district', 'division', 'upazila', 'postal_code', 'country_code', 'delivery_instructions', 'is_default'])]
 #[UseFactory(AddressFactory::class)]
 class Address extends Model
 {

@@ -11,12 +11,17 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['customer_id'])]
+#[Fillable(['customer_id', 'guest_key'])]
 #[UseFactory(CartFactory::class)]
 class Cart extends Model
 {
     /** @use HasFactory<CartFactory> */
     use HasFactory;
+
+    protected function casts(): array
+    {
+        return ['expires_at' => 'datetime', 'converted_at' => 'datetime'];
+    }
 
     public function customer(): BelongsTo
     {

@@ -17,6 +17,101 @@ class CatalogTest extends TestCase
 {
     use LazilyRefreshDatabase;
 
+    public function test_public_product_ids_distinguish_products_with_the_same_name(): void
+    {
+        $first = Product::factory()->create(['name' => 'Matching Bottle', 'slug' => 'bottle-first', 'status' => 'published']);
+        $second = Product::factory()->create(['name' => 'Matching Bottle', 'slug' => 'bottle-second', 'status' => 'published']);
+
+        $this->getJson('/api/catalog/products/'.$first->id)->assertOk()->assertJsonPath('data.product.id', $first->id);
+        $this->getJson('/api/catalog/products/'.$second->id)->assertOk()->assertJsonPath('data.product.id', $second->id);
+
+        $first->update(['name' => 'Renamed Bottle', 'slug' => 'renamed-bottle']);
+        $this->getJson('/api/catalog/products/'.$first->id)->assertOk()
+            ->assertJsonPath('data.product.id', $first->id)
+            ->assertJsonPath('data.product.name', 'Renamed Bottle');
+    }
+
+    public function test_public_product_details_reject_text_slugs_and_missing_or_unpublished_ids(): void
+    {
+        $published = Product::factory()->create(['status' => 'published', 'slug' => 'published-bottle']);
+        $draft = Product::factory()->create(['status' => 'draft']);
+        $archived = Product::factory()->create(['status' => 'archived']);
+
+        $this->getJson('/api/catalog/products/'.$published->slug)->assertNotFound();
+        $this->getJson('/api/catalog/products/'.$draft->id)->assertNotFound();
+        $this->getJson('/api/catalog/products/'.$archived->id)->assertNotFound();
+        $this->getJson('/api/catalog/products/99999999')->assertNotFound();
+    }
+
+    public function test_staff_can_enable_and_remove_the_new_product_pill(): void
+    {
+        $this->staff();
+        $response = $this->postJson('/api/products', [
+            'name' => 'Pill product', 'slug' => 'pill-product', 'status' => 'published', 'is_new' => true,
+        ])->assertCreated()->assertJsonPath('data.product.is_new', true);
+        $id = $response->json('data.product.id');
+
+        $this->getJson('/api/catalog/products/'.$id)->assertOk()->assertJsonPath('data.product.is_new', true);
+        $this->patchJson('/api/products/'.$id, ['name' => 'Renamed pill product'])->assertOk()->assertJsonPath('data.product.is_new', true);
+        $this->patchJson('/api/products/'.$id, ['is_new' => false])->assertOk()->assertJsonPath('data.product.is_new', false);
+        $this->getJson('/api/catalog/products/'.$id)->assertOk()->assertJsonPath('data.product.is_new', false);
+        $this->assertDatabaseHas('products', ['id' => $id, 'is_new' => false]);
+    }
+
+    public function test_new_product_pill_defaults_to_off_and_rejects_invalid_values(): void
+    {
+        $product = Product::factory()->create(['status' => 'published']);
+        $this->getJson('/api/catalog/products/'.$product->id)->assertOk()->assertJsonPath('data.product.is_new', false);
+        $this->staff();
+        $this->patchJson('/api/products/'.$product->id, ['is_new' => 'invalid'])->assertUnprocessable()->assertJsonValidationErrors('is_new');
+        $this->assertDatabaseHas('products', ['id' => $product->id, 'is_new' => false]);
+    }
+
+    public function test_public_catalog_defaults_to_fifteen_products_and_paginates_remaining_products(): void
+    {
+        $products = Product::factory()->count(17)->create(['status' => 'published']);
+        Product::factory()->create(['status' => 'draft']);
+
+        $this->getJson('/api/catalog/products')->assertOk()
+            ->assertJsonCount(15, 'data.products')
+            ->assertJsonPath('data.products.0.id', $products[0]->id)
+            ->assertJsonPath('data.pagination', ['current_page' => 1, 'per_page' => 15, 'total' => 17, 'last_page' => 2]);
+        $this->getJson('/api/catalog/products?page=2')->assertOk()
+            ->assertJsonCount(2, 'data.products')
+            ->assertJsonPath('data.products.0.id', $products[15]->id)
+            ->assertJsonPath('data.pagination.current_page', 2);
+    }
+
+    public function test_public_catalog_supports_search_with_custom_limits_and_pages(): void
+    {
+        $products = Product::factory()->count(7)->create(['status' => 'published', 'name' => 'Matching Bottle']);
+        Product::factory()->create(['status' => 'published', 'name' => 'Cup', 'description' => 'A cup']);
+        Product::factory()->create(['status' => 'draft', 'name' => 'Matching Bottle']);
+
+        foreach ([1, 2, 3] as $limit) {
+            $this->getJson('/api/catalog/products?search=bottle&limit='.$limit.'&page=2')->assertOk()
+                ->assertJsonCount($limit, 'data.products')
+                ->assertJsonPath('data.products.0.id', $products[$limit]->id)
+                ->assertJsonPath('data.pagination.per_page', $limit)
+                ->assertJsonPath('data.pagination.total', 7)
+                ->assertJsonPath('data.pagination.current_page', 2);
+        }
+        $this->getJson('/api/catalog/products?search=bottle&limit=3&page=4')->assertOk()
+            ->assertJsonCount(0, 'data.products')->assertJsonPath('data.pagination.total', 7);
+        $this->getJson('/api/catalog/products?search=bottle&per_page=2')->assertOk()
+            ->assertJsonCount(2, 'data.products');
+        $this->getJson('/api/catalog/products?search=bottle&per_page=2&limit=3')->assertOk()
+            ->assertJsonCount(3, 'data.products');
+    }
+
+    public function test_public_catalog_rejects_invalid_limits(): void
+    {
+        foreach (['0', '-1', '101', '1.5', 'abc'] as $limit) {
+            $this->getJson('/api/catalog/products?limit='.$limit)->assertUnprocessable()
+                ->assertJsonValidationErrors('limit');
+        }
+    }
+
     private function staff(array $permissions = ['catalog.view', 'catalog.manage']): User
     {
         $user = User::factory()->create(['role' => 'staff', 'permissions' => $permissions]);

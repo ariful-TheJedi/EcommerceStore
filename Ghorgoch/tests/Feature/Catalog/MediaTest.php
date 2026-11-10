@@ -85,7 +85,7 @@ class MediaTest extends TestCase
         $hidden->fill(['product_id' => $product->id, 'variant_id' => $inactive->id, 'image_path' => 'catalog/hidden.png']);
         $hidden->save();
 
-        $this->getJson('/api/catalog/products/'.$product->slug)->assertOk()
+        $this->getJson('/api/catalog/products/'.$product->id)->assertOk()
             ->assertJsonPath('data.product.variants.0.images.0.id', $image->id)
             ->assertJsonCount(1, 'data.product.images');
     }

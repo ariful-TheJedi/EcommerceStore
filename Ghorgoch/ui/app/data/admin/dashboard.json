@@ -1,0 +1,19 @@
+{
+  "dashboard": "Store overview", "description": "Your store at a glance. Keep an eye on what matters.",
+  "eyebrow": "WORKSPACE / DASHBOARD", "summary": "Store performance", "allTime": "All time",
+  "trafficSubtitle": "Visitor activity across your storefront", "notConnected": "Not connected",
+  "latest": "Latest additions", "viewOrders": "View orders", "viewProducts": "View products",
+  "refresh": "Refresh", "refreshing": "Refreshing...", "loading": "Loading...", "unavailable": "Unavailable",
+  "orders": "Total orders", "ordersHint": "All orders, including cancelled orders",
+  "newOrders": "New orders", "newOrdersHint": "Pending orders awaiting confirmation",
+  "products": "Total products", "productsHint": "Published, draft, and archived products",
+  "customers": "Customers", "customersHint": "All registered customer profiles",
+  "categories": "Categories", "categoriesHint": "All categories and subcategories",
+  "tags": "Tags", "tagsHint": "Product labels across the catalog",
+  "traffic": "Store traffic", "lastSevenDays": "Last 7 days",
+  "trafficUnavailable": "Traffic tracking not connected",
+  "trafficHint": "Visitor trends will appear when traffic collection is configured.",
+  "viewTraffic": "View traffic monitoring",
+  "recentCategories": "Recently added categories", "recentHint": "The four latest additions to your catalog",
+  "noCategories": "No categories added yet.", "active": "Active", "inactive": "Inactive"
+}

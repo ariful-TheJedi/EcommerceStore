@@ -79,6 +79,15 @@ class CatalogQuery
 
     public static function availability(Builder $query, string $filter): void
     {
+        if (! config('catalog.inventory_enabled')) {
+            if ($filter === 'in_stock') {
+                $query->where('is_active', true);
+            } else {
+                $query->whereRaw('1 = 0');
+            }
+
+            return;
+        }
         match ($filter) {
             'in_stock' => $query->where(fn (Builder $query) => $query->whereColumn('stock_quantity', '>', 'reserved_quantity')->orWhere('allow_backorders', true)),
             'out_of_stock' => $query->where('allow_backorders', false)->whereColumn('stock_quantity', '<=', 'reserved_quantity'),

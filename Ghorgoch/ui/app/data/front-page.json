@@ -1,0 +1,218 @@
+{
+  "page": {
+    "title": "বাছাই সংগ্রহ",
+    "title2": "নতুন এসেছে"
+  },
+  "collections": {
+    "homeCategories": [
+      {
+        "id": "everyday",
+        "name": "পোশাক",
+        "image": "/images/sample-hoodie.webp"
+      },
+      {
+        "id": "accessories",
+        "name": "অনুষঙ্গ",
+        "image": "/images/sample-sunglasses.jpg"
+      },
+      {
+        "id": "jewelry",
+        "name": "গয়না",
+        "image": "/images/sample-necklace.jpg"
+      },
+      {
+        "id": "home",
+        "name": "ঘর ও জীবন",
+        "image": "/images/sample-faucet.webp"
+      },
+      {
+        "id": "technology",
+        "name": "গ্যাজেট",
+        "image": "/images/sample-watch.jpg"
+      },
+      {
+        "id": "bags",
+        "name": "ব্যাগ",
+        "image": "/images/exp-hero.png"
+      }
+    ],
+    "featuredHomeProducts": [
+      {
+        "id": "sunglasses",
+        "name": "ক্ল্যাসিক অলিভ সানগ্লাস",
+        "image": "/images/sample-sunglasses.jpg",
+        "price": 650,
+        "originalPrice": 850
+      },
+      {
+        "id": "necklace",
+        "name": "বাটারফ্লাই নেকলেস",
+        "image": "/images/sample-necklace.jpg",
+        "price": 790
+      },
+      {
+        "id": "earrings",
+        "name": "ফ্লোরাল স্টেটমেন্ট ইয়াররিং",
+        "image": "/images/sample-earrings.jpg",
+        "price": 550,
+        "originalPrice": 690
+      },
+      {
+        "id": "faucet",
+        "name": "ব্রাশড গোল্ড বেসিন ট্যাপ",
+        "image": "/images/sample-faucet.webp",
+        "price": 2490
+      }
+    ],
+    "newHomeProducts": [
+      {
+        "id": "watch",
+        "name": "এভরিডে স্মার্ট ওয়াচ",
+        "image": "/images/sample-watch.jpg",
+        "price": 1890,
+        "isNew": true
+      },
+      {
+        "id": "pendant",
+        "name": "গোল্ডেন বাটারফ্লাই পেনড্যান্ট",
+        "image": "/images/sample-pendant.jpg",
+        "price": 890,
+        "isNew": true
+      },
+      {
+        "id": "speaker",
+        "name": "পোর্টেবল ব্লুটুথ স্পিকার",
+        "image": "/images/sample-speaker.jpg",
+        "price": 1290,
+        "isNew": true
+      },
+      {
+        "id": "hoodie",
+        "name": "কমফোর্ট ফিট হুডি",
+        "image": "/images/sample-hoodie.webp",
+        "price": 1490,
+        "isNew": true
+      }
+    ],
+    "homeFaqItems": [
+      {
+        "id": "collections",
+        "question": "ঘরগোছে কী ধরনের পণ্য পাব?",
+        "answer": "পোশাক, গয়না, ব্যাগ, গ্যাজেট ও ঘরের অনুষঙ্গ—প্রতিদিনের প্রয়োজন আর ভালো লাগার নানা পণ্য এক জায়গায় পাবেন। পছন্দের বিভাগ থেকে সহজেই ঘুরে দেখুন।"
+      },
+      {
+        "id": "finding-products",
+        "question": "পছন্দের পণ্য কীভাবে খুঁজব?",
+        "answer": "বিভাগ অনুযায়ী সংগ্রহ দেখুন অথবা সার্চে পণ্যের নাম লিখুন। নতুন এসেছে বিভাগে সাম্প্রতিক সংগ্রহ আর বাছাই সংগ্রহে আমাদের নির্বাচিত পণ্যগুলো দেখতে পারবেন।"
+      },
+      {
+        "id": "product-details",
+        "question": "কেনার আগে কোন বিষয়গুলো দেখে নেব?",
+        "answer": "পণ্যের ছবি, বিবরণ, দাম এবং প্রযোজ্য ক্ষেত্রে সাইজ, রং ও উপকরণ মিলিয়ে নিন। নিজের প্রয়োজনের সঙ্গে মিলিয়ে বেছে নিলে কেনাকাটা আরও সহজ হয়।"
+      },
+      {
+        "id": "delivery",
+        "question": "ডেলিভারির সময় ও খরচ কীভাবে জানব?",
+        "answer": "ডেলিভারির সময় ও খরচ ঠিকানার ওপর নির্ভর করতে পারে। অর্ডার নিশ্চিত করার আগে আপনার এলাকার ডেলিভারি চার্জ ও সম্ভাব্য সময় জেনে নিন।"
+      },
+      {
+        "id": "returns",
+        "question": "পণ্য বদল বা ফেরতের আগে কী জানা দরকার?",
+        "answer": "পণ্যভেদে বদল বা ফেরতের শর্ত আলাদা হতে পারে। কেনার আগে প্রযোজ্য শর্ত জেনে নিন এবং পণ্য পাওয়ার পর তার অবস্থা, প্যাকেজিং ও অর্ডারের তথ্য সংরক্ষণ করুন।"
+      }
+    ]
+  },
+  "hero": {
+    "arialabel": "ঘরগোছের সংগ্রহ",
+    "h1Text": "ঘরগোছ — সুন্দর প্রতিদিনের সংগ্রহ",
+    "arialabel2": "আগের স্লাইড",
+    "arialabel3": "পরের স্লাইড",
+    "arialabel4": "স্লাইড বেছে নিন",
+    "label": "স্লাইড স্বয়ংক্রিয়ভাবে চালান",
+    "label2": "স্লাইড থামান",
+    "spanText": "স্লাইড ",
+    "spanText2": "/ ",
+    "slides": [
+      {
+        "image": "/images/exp-hero.png",
+        "alt": "ঘরগোছের ব্যাগ, হেডফোন ও দৈনন্দিন অনুষঙ্গ",
+        "eyebrow": "যত্নে বাছাই · প্রতিদিনের জন্য",
+        "title": "পছন্দের জিনিসে,",
+        "accent": "সুন্দর প্রতিদিন।",
+        "description": "ঘর থেকে পথচলা—প্রয়োজন আর ভালো লাগার সংগ্রহ।",
+        "href": "#collection",
+        "action": "সংগ্রহ দেখুন"
+      },
+      {
+        "image": "/images/exp-offer.png",
+        "alt": "ঘরের জন্য বাছাই করা লাইফস্টাইল অনুষঙ্গ",
+        "eyebrow": "ঘরের ছোট্ট আনন্দ",
+        "title": "নিজের মতো করে,",
+        "accent": "সাজুক প্রিয় কোণ।",
+        "description": "ছোট ছোট পছন্দে ঘর হয়ে উঠুক আরও আপনার।",
+        "href": "/categories",
+        "action": "বিভাগগুলো দেখুন"
+      }
+    ],
+    "accessibleLabel1": "স্লাইড {value1}"
+  },
+  "benefits": {
+    "arialabel": "ঘরগোছের কেনাকাটার অভিজ্ঞতা",
+    "benefits": [
+      {
+        "icon": "ShoppingBag",
+        "title": "যত্নে বাছাই",
+        "text": "আপনার প্রতিদিনের জন্য"
+      },
+      {
+        "icon": "PackageCheck",
+        "title": "পণ্যের পরিষ্কার তথ্য",
+        "text": "জেনে বুঝে বেছে নিন"
+      },
+      {
+        "icon": "Heart",
+        "title": "ভালো লাগার সংগ্রহ",
+        "text": "প্রয়োজনের সঙ্গে সৌন্দর্য"
+      },
+      {
+        "icon": "Search",
+        "title": "সহজ কেনাকাটা",
+        "text": "পছন্দের জিনিস খুঁজুন"
+      }
+    ]
+  },
+  "categories": {
+    "h2Text": "আপনার পছন্দের বিভাগ",
+    "pText": "প্রয়োজনের জিনিস খুঁজে নিন সহজেই",
+    "LinkText": "সব বিভাগ ",
+    "label": "বিভাগগুলো লোড করা যায়নি। একটু পরে আবার চেষ্টা করুন।",
+    "label2": "নতুন বিভাগ শীঘ্রই আসছে।"
+  },
+  "products": {
+    "LinkText": "সব পণ্য দেখুন →",
+    "label": "পণ্য লোড করা যায়নি। একটু পরে আবার চেষ্টা করুন।",
+    "label2": "নতুন পণ্য শীঘ্রই আসছে।"
+  },
+  "promotions": {
+    "arialabel": "বিশেষ সংগ্রহ",
+    "imagesExpHeroPng": "/images/exp-hero.png",
+    "imageAlt": "প্রতিদিনের ব্যবহারের ব্যাগ ও অনুষঙ্গ",
+    "eyebrow": "প্রতিদিনের সঙ্গী",
+    "textText": "একটু গুছিয়ে,",
+    "textText2": "নিজের মতো করে।",
+    "description": "পথচলার প্রয়োজনীয় অনুষঙ্গ।",
+    "action": "সংগ্রহ দেখুন",
+    "imagesExpOfferPng": "/images/exp-offer.png",
+    "imageAlt2": "ঘরের জন্য বাছাই করা লাইফস্টাইল অনুষঙ্গ",
+    "eyebrow2": "ঘরের ছোট্ট আনন্দ",
+    "textText3": "সাজুক আপনার",
+    "textText4": "প্রিয় কোণ।",
+    "description2": "ভালো লাগার ছোট্ট পরিবর্তন।",
+    "action2": "বিভাগগুলো দেখুন"
+  },
+  "faq": {
+    "label": "আপনার প্রশ্ন, আমাদের উত্তর",
+    "label2": "কেনাকাটার আগে দরকারি কিছু কথা। এক নজরে জেনে নিন।",
+    "pText": "সচরাচর জিজ্ঞাসা"
+  }
+}

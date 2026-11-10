@@ -68,7 +68,7 @@ class StaffRequest extends FormRequest
             },
         ];
         $rules['role'] = [$creating ? 'required' : 'sometimes', Rule::in(['admin', 'staff'])];
-        $rules['permissions'] = ['sometimes', 'array', 'max:14'];
+        $rules['permissions'] = ['sometimes', 'array', 'max:'.count(config('staff.permissions'))];
         $rules['permissions.*'] = ['required', 'string', 'distinct', Rule::in(config('staff.permissions'))];
         if ($creating) {
             $rules['password'] = ['required', 'string', Password::min(12)->mixedCase()->numbers()->symbols(), 'confirmed',

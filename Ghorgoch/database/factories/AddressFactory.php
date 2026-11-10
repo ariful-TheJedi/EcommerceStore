@@ -28,7 +28,7 @@ class AddressFactory extends Factory
             'area' => fake()->optional()->citySuffix(),
             'city' => fake()->city(),
             'district' => fake()->optional()->city(),
-            'postal_code' => fake()->optional()->postcode(),
+            'postal_code' => fake()->optional()->numerify('####'),
             'country_code' => 'BD',
             'is_default' => false,
         ];

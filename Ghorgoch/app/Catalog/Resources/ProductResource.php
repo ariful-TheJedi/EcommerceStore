@@ -19,6 +19,8 @@ class ProductResource extends JsonResource
         return [
             'id' => $this->id, 'name' => $this->name, 'slug' => $this->slug,
             'description' => $this->description, 'status' => $this->status,
+            'specifications' => $this->specifications === null ? null : (object) $this->specifications,
+            'is_new' => (bool) $this->is_new,
             'currency' => config('catalog.currency'),
             'categories' => $this->categories->map(fn ($category): array => ['id' => $category->id, 'name' => $category->name, 'slug' => $category->slug, 'parent_id' => $category->parent_id])->values(),
             'tags' => $this->tags->map(fn ($tag): array => ['id' => $tag->id, 'name' => $tag->name, 'slug' => $tag->slug])->values(),

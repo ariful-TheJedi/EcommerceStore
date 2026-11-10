@@ -1,0 +1,51 @@
+{
+  "items": [
+    {
+      "label": "Dashboard",
+      "href": "/admin",
+      "icon": "LayoutDashboard"
+    },
+    {
+      "label": "Traffic Monitoring",
+      "href": "/admin/traffic",
+      "icon": "Activity"
+    },
+    {
+      "label": "Orders",
+      "href": "/admin/orders",
+      "icon": "ClipboardList"
+    },
+    {
+      "label": "Products",
+      "href": "/admin/products",
+      "icon": "Package"
+    },
+    {
+      "label": "Front Page",
+      "href": "/admin/front-page",
+      "icon": "PencilLine"
+    },
+    {
+      "label": "Inventory",
+      "href": "/admin/inventory",
+      "icon": "Boxes"
+    },
+    {
+      "label": "Settings",
+      "href": "/admin/settings",
+      "icon": "Settings",
+      "group": "account"
+    },
+    {
+      "label": "User Management",
+      "href": "/admin/users",
+      "icon": "UserList",
+      "group": "account"
+    },
+    {
+      "label": "Sign out",
+      "action": "logout",
+      "icon": "LogOut"
+    }
+  ]
+}

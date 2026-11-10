@@ -1,0 +1,22 @@
+{
+  "pText": "Checking session…",
+  "ghorgochAdministration": "Ghorgoch administration",
+  "aLittleCare": "A little care.",
+  "aBetterStore": "A better store.",
+  "yourSpaceToManageProductsUpdateCollections": "Your space to manage products, update collections, and keep Ghorgoch running smoothly.",
+  "forAuthorizedStaffMembers": "For authorized staff members.",
+  "ghorgochHome": "Ghorgoch home",
+  "welcomeBack": "Welcome back",
+  "adminSignIn": "Admin sign in",
+  "enterYourStaffCredentialsToContinue": "Enter your staff credentials to continue.",
+  "emailAddress": "Email address",
+  "youExampleCom": "you@example.com",
+  "password": "Password",
+  "enterYourPassword": "Enter your password",
+  "hidePassword": "Hide password",
+  "showPassword": "Show password",
+  "loadingLabel": "Signing in…",
+  "signIn": "Sign in",
+  "backToStore": "Back to store",
+  "unableToSignInPleaseTry": "Unable to sign in. Please try again."
+}

@@ -1,0 +1,93 @@
+name: ghorgoch
+
+x-backend: &backend
+  image: ghorgoch-api:latest
+  build:
+    context: .
+  env_file: .env
+  environment:
+    APP_ENV: local
+    APP_DEBUG: "false"
+    APP_KEY: ${APP_KEY:?Set APP_KEY in .env before starting Docker}
+    APP_URL: ${DOCKER_API_URL:-http://localhost:8000}
+    LOG_CHANNEL: stderr
+    DB_URL: ""
+    DB_CONNECTION: pgsql
+    DB_HOST: database
+    DB_PORT: "5432"
+    DB_DATABASE: ${DB_DATABASE:-ecommerce_store}
+    DB_USERNAME: ${DB_USERNAME:-postgres}
+    DB_PASSWORD: ${DB_PASSWORD:-ghorgoch-local}
+    SESSION_DOMAIN: "null"
+    SESSION_SECURE_COOKIE: "false"
+    CACHE_STORE: database
+    SESSION_DRIVER: database
+    QUEUE_CONNECTION: database
+  volumes:
+    - app-storage:/var/www/html/storage
+
+services:
+  database:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-ecommerce_store}
+      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-ghorgoch-local}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  migrate:
+    <<: *backend
+    user: www-data
+    command: ["php", "artisan", "migrate", "--force", "--no-interaction"]
+    healthcheck:
+      disable: true
+    depends_on:
+      database:
+        condition: service_healthy
+
+  api:
+    <<: *backend
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${DOCKER_API_PORT:-8000}:80"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  worker:
+    <<: *backend
+    user: www-data
+    restart: unless-stopped
+    command: ["php", "artisan", "queue:work", "--sleep=3", "--tries=3", "--timeout=90"]
+    stop_grace_period: 100s
+    healthcheck:
+      disable: true
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  storefront:
+    image: ghorgoch-ui:latest
+    build:
+      context: ./ui
+      args:
+        LARAVEL_API_URL: http://api
+    restart: unless-stopped
+    environment:
+      LARAVEL_API_URL: http://api
+    ports:
+      - "127.0.0.1:${DOCKER_UI_PORT:-3000}:3000"
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  postgres-data:
+  app-storage:

@@ -43,6 +43,7 @@ class AuthService
             throw new AuthenticationException('The provided credentials are invalid.');
         }
 
+        $guestCartToken = $accountType === 'customer' ? $request->session()->get('guest_cart_token') : null;
         Auth::shouldUse($accountType);
         $request->session()->invalidate();
         Auth::guard($accountType)->login($user);
@@ -51,6 +52,9 @@ class AuthService
             'auth_started_at' => now()->timestamp,
             'auth_fingerprint' => $this->fingerprint($user),
         ]);
+        if (is_string($guestCartToken)) {
+            $request->session()->put('guest_cart_token', $guestCartToken);
+        }
         $this->audit('logged_in', $user);
 
         return $user;

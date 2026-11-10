@@ -5,6 +5,7 @@ namespace App\Users\Resources;
 use App\Users\Domain\Services\StaffPermissions;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class StaffResource extends JsonResource
 {
@@ -16,6 +17,7 @@ class StaffResource extends JsonResource
             'email' => $this->email,
             'phone' => $this->phone,
             'avatar_path' => $this->avatar_path,
+            'avatar_url' => $this->avatar_path ? Storage::disk('public')->url($this->avatar_path) : null,
             'role' => $this->role,
             'is_active' => $this->is_active,
             'permissions' => app(StaffPermissions::class)->effective($this->resource),

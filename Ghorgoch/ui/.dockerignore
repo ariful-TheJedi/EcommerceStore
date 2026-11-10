@@ -1,0 +1,11 @@
+.react-router
+build
+node_modules
+README.md
+.next
+out
+.git
+.agents
+.env*
+*.log
+*.tsbuildinfo
